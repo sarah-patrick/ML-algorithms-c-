@@ -1,0 +1,210 @@
+/*
+    Homework 3 A
+    Machine Learning
+    Sarah Patrick
+*/
+
+#include<iostream>
+#include<stdlib.h>
+#include <time.h>
+#include<cstring>
+
+using namespace std;
+
+struct data
+{
+    int x1;
+    int x2;
+    int x3;
+    int x4;
+    int classification;
+};
+
+void getData( data* a, data* b );
+
+int main()
+{
+    //==========TITLE SCREEN===========
+    cout << "|=====================================|\n";
+    cout << "|        Naive Bayes Algorithm        |\n";
+    cout << "|=====================================|\n";
+
+    data* train = new data[11];
+    data* test = new data[3];
+    getData( train, test );
+
+    //get probability of yes when feature i is 1 vs -1 and store
+    double x1p1yes = 0, x1p0yes = 0, x2p1yes = 0, x2p0yes = 0, x3p1yes = 0, x3p0yes = 0, x4p1yes = 0, x4p0yes = 0;
+    double x1p1no = 0, x1p0no = 0, x2p1no = 0, x2p0no = 0, x3p1no = 0, x3p0no = 0, x4p1no = 0, x4p0no = 0;
+
+    for(int i = 0; i < 11; i++)
+    {
+        if(train[i].x1 == 1 && train[i].classification == 1){x1p1yes++;}
+        if(train[i].x1 == 0 && train[i].classification == 1){x1p0yes++;}
+        if(train[i].x1 == 1 && train[i].classification == -1){x1p1no++;}
+        if(train[i].x1 == 0 && train[i].classification == -1){x1p0no++;}
+
+        if(train[i].x2 == 1 && train[i].classification == 1){x2p1yes++;}
+        if(train[i].x2 == 0 && train[i].classification == 1){x2p0yes++;}
+        if(train[i].x2 == 1 && train[i].classification == 1){x2p1no++;}
+        if(train[i].x2 == 0 && train[i].classification == 1){x2p0no++;}
+
+        if(train[i].x3 == 1 && train[i].classification == 1){x3p1yes++;}
+        if(train[i].x3 == 0 && train[i].classification == 1){x3p0yes++;}
+        if(train[i].x3 == 1 && train[i].classification == 1){x3p1no++;}
+        if(train[i].x3 == 0 && train[i].classification == 1){x3p0no++;}
+
+        if(train[i].x4 == 1 && train[i].classification == 1){x4p1yes++;}
+        if(train[i].x4 == 0 && train[i].classification == 1){x4p0yes++;}
+        if(train[i].x4 == 1 && train[i].classification == 1){x4p1no++;}
+        if(train[i].x4 == 0 && train[i].classification == 1){x4p0no++;}
+    }
+
+    x1p1yes = ( x1p1yes + 1 ) / 12;
+    x1p0yes = ( x1p0yes + 1 ) / 12;
+    x1p1no = ( x1p1no + 1 ) / 12;
+    x1p0no = ( x1p0no + 1 ) / 12;
+
+    x2p1yes = ( x2p1yes + 1 ) / 12;
+    x2p0yes = ( x2p0yes + 1 ) / 12;
+    x2p1no = ( x2p1no + 1 ) / 12;
+    x2p0no = ( x2p0no + 1 ) / 12;
+
+    x3p1yes = ( x3p1yes + 1 ) / 12;
+    x3p0yes = ( x3p0yes + 1 ) / 12;
+    x3p1no = ( x3p1no + 1 ) / 12;
+    x3p0no = ( x3p0no + 1 ) / 12;
+
+    x4p1yes = ( x4p1yes + 1 ) / 12;
+    x4p0yes = ( x4p0yes + 1 ) / 12;
+    x4p1no = ( x4p1no + 1 ) / 12;
+    x4p0no = ( x4p0no + 1 ) / 12;
+
+    //for each piece of test data, multiply the relevant probabilities to get chance of being 1 and chance of being -1 and compare
+    for(int i = 0; i < 3; i++)
+    {
+        double probyes = 1;
+        double probno = 1;
+        if(test[i].x1 == 1){ probyes *= x1p1yes;}
+        if(test[i].x1 == 0){ probyes *= x1p0yes;}
+        if(test[i].x2 == 1){ probyes *= x2p1yes;}
+        if(test[i].x2 == 0){ probyes *= x2p0yes;}
+        if(test[i].x3 == 1){ probyes *= x3p1yes;}
+        if(test[i].x3 == 0){ probyes *= x3p0yes;}
+        if(test[i].x4 == 1){ probyes *= x4p1yes;}
+        if(test[i].x4 == 0){ probyes *= x4p0yes;}
+
+        if(test[i].x1 == 1){ probno *= x1p1no;}
+        if(test[i].x1 == 0){ probno *= x1p0no;}
+        if(test[i].x2 == 1){ probno *= x2p1no;}
+        if(test[i].x2 == 0){ probno *= x2p0no;}
+        if(test[i].x3 == 1){ probno *= x3p1no;}
+        if(test[i].x3 == 0){ probno *= x3p0no;}
+        if(test[i].x4 == 1){ probno *= x4p1no;}
+        if(test[i].x4 == 0){ probno *= x4p0no;}
+
+        cout << "\n\nThe probability that test data point " << i+1 << " is classification 1 is " << probyes;
+        cout << "\nThe probability that test data point " << i+1 << " is classification -1 is " << probno;
+        if( probyes > probno ) { cout << "\nTest data point " << i << " is classification " << 1; }
+        if( probno > probyes ) { cout << "\nTest data point " << i << " is classification " << -1; }
+        if ( probyes == probno )
+        {
+            srand(time(NULL));
+            int r = rand() % 2;
+            if( r == 1 ) { cout << "\nTest data point " << i << " is classification " << 1; }
+            else { cout << "\nTest data point " << i << " is classification " << -1; }
+        }
+    }
+
+    delete [] test;
+    delete [] train;
+
+    return 0;
+}
+
+void getData( data* a, data* b )
+{
+    a[0].x1 = 0;
+    a[0].x2 = 0;
+    a[0].x3 = 0;
+    a[0].x4 = 0;
+    a[0].classification = 1;
+
+    a[1].x1 = 0;
+    a[1].x2 = 1;
+    a[1].x3 = 0;
+    a[1].x4 = 0;
+    a[1].classification = 1;
+
+    a[2].x1 = 0;
+    a[2].x2 = 1;
+    a[2].x3 = 1;
+    a[2].x4 = 0;
+    a[2].classification = 1;
+
+    a[3].x1 = 0;
+    a[3].x2 = 1;
+    a[3].x3 = 1;
+    a[3].x4 = 1;
+    a[3].classification = 1;
+
+    a[4].x1 = 1;
+    a[4].x2 = 1;
+    a[4].x3 = 0;
+    a[4].x4 = 0;
+    a[4].classification = 1;
+
+    a[5].x1 = 1;
+    a[5].x2 = 1;
+    a[5].x3 = 0;
+    a[5].x4 = 1;
+    a[5].classification = 1;
+
+    a[6].x1 = 0;
+    a[6].x2 = 0;
+    a[6].x3 = 0;
+    a[6].x4 = 1;
+    a[6].classification = -1;
+
+    a[7].x1 = 0;
+    a[7].x2 = 0;
+    a[7].x3 = 1;
+    a[7].x4 = 1;
+    a[7].classification = -1;
+
+    a[8].x1 = 1;
+    a[8].x2 = 0;
+    a[8].x3 = 0;
+    a[8].x4 = 1;
+    a[8].classification = -1;
+
+    a[9].x1 = 1;
+    a[9].x2 = 0;
+    a[9].x3 = 1;
+    a[9].x4 = 0;
+    a[9].classification = -1;
+
+    a[10].x1 = 1;
+    a[10].x2 = 1;
+    a[10].x3 = 1;
+    a[10].x4 = 1;
+    a[10].classification = -1;
+
+    b[0].x1 = 0;
+    b[0].x2 = 0;
+    b[0].x3 = 1;
+    b[0].x4 = 0;
+    b[0].classification = 1;
+
+    b[1].x1 = 0;
+    b[1].x2 = 1;
+    b[1].x3 = 0;
+    b[1].x4 = 1;
+    b[1].classification = 1;
+
+    b[2].x1 = 1;
+    b[2].x2 = 0;
+    b[2].x3 = 0;
+    b[2].x4 = 0;
+    b[2].classification = -1;
+}
